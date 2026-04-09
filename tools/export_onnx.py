@@ -20,9 +20,9 @@ import sys
 
 import torch
 
-sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "guppylm"))
-from config import GuppyConfig
-from model import GuppyLM
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from guppylm.config import GuppyConfig
+from guppylm.model import GuppyLM
 
 
 def load_env():

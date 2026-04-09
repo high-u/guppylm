@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GuppyLM</title>
+<style>
+  body { font-family: monospace; max-width: 600px; margin: 40px auto; padding: 0 20px; }
+  #status { color: gray; font-size: 13px; margin-bottom: 12px; }
+  #response { white-space: pre-wrap; min-height: 40px; padding: 8px; border: 1px solid #ccc; margin-bottom: 12px; }
+  #input-row { display: flex; gap: 8px; }
+  #user-input { flex: 1; font-family: monospace; font-size: 14px; padding: 6px 8px; }
+  #send-btn { font-family: monospace; font-size: 14px; padding: 6px 16px; cursor: pointer; }
+  #send-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+</style>
+</head>
+<body>
+
+<div id="status">loading model...</div>
+<div id="response"></div>
+<div id="input-row">
+  <input type="text" id="user-input" placeholder="type a message..." autocomplete="off" disabled />
+  <button id="send-btn" disabled>send</button>
+</div>
+
+<script type="module">
+const CONFIG = {
+  vocab_size: 4096, max_seq_len: 128,
+  pad_id: 0, bos_id: 1, eos_id: 2,
+};
+const GEN = { temperature: 0.7, top_k: 50, max_tokens: 32 };
+
+let session, tokenizer;
+
+// ── ByteLevel BPE tokenizer ──
+function buildTokenizer(json) {
+  const vocab = json.model.vocab;
+  const merges = json.model.merges;
+  const added = {};
+  for (const t of json.added_tokens) added[t.content] = t.id;
+  const id2token = {};
+  for (const [tok, id] of Object.entries(vocab)) id2token[id] = tok;
+  for (const [tok, id] of Object.entries(added)) id2token[id] = tok;
+
+  const byte2char = {};
+  const char2byte = {};
+  const ranges = [[33,126],[161,172],[174,255]];
+  const direct = new Set();
+  for (const [lo,hi] of ranges) for (let b = lo; b <= hi; b++) direct.add(b);
+  let n = 0;
+  for (let b = 0; b < 256; b++) {
+    byte2char[b] = direct.has(b) ? String.fromCharCode(b) : String.fromCharCode(256 + n++);
+  }
+  for (const [b,c] of Object.entries(byte2char)) char2byte[c] = parseInt(b);
+
+  const mergeRank = {};
+  for (let i = 0; i < merges.length; i++) {
+    const key = Array.isArray(merges[i]) ? merges[i].join(" ") : merges[i];
+    mergeRank[key] = i;
+  }
+
+  function bpe(word) {
+    if (word.length <= 1) return word;
+    let pieces = word.slice();
+    while (pieces.length > 1) {
+      let bestRank = Infinity, bestIdx = -1;
+      for (let i = 0; i < pieces.length - 1; i++) {
+        const rank = mergeRank[pieces[i] + " " + pieces[i+1]];
+        if (rank !== undefined && rank < bestRank) { bestRank = rank; bestIdx = i; }
+      }
+      if (bestIdx === -1) break;
+      pieces = [...pieces.slice(0, bestIdx), pieces[bestIdx]+pieces[bestIdx+1], ...pieces.slice(bestIdx+2)];
+    }
+    return pieces;
+  }
+
+  const PAT = /'(?:[sdmt]|ll|ve|re)| ?\p{L}+| ?\p{N}+| ?[^\s\p{L}\p{N}]+|\s+(?!\S)|\s+/gu;
+
+  function encode(text) {
+    const specialRe = new RegExp("(" + Object.keys(added).map(s => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")).join("|") + ")");
+    const ids = [];
+    for (const seg of text.split(specialRe)) {
+      if (!seg) continue;
+      if (added[seg] !== undefined) { ids.push(added[seg]); continue; }
+      for (const word of seg.match(PAT) || [seg]) {
+        const byteChars = [...Array.from(new TextEncoder().encode(word)).map(b => byte2char[b]).join("")];
+        for (const tok of bpe(byteChars)) {
+          const id = vocab[tok];
+          if (id !== undefined) ids.push(id);
+        }
+      }
+    }
+    return ids;
+  }
+
+  function decode(ids) {
+    const parts = [];
+    for (const id of ids) {
+      const tok = id2token[id];
+      if (tok && added[tok] === undefined) parts.push(tok);
+    }
+    const bytes = Uint8Array.from([...parts.join("")].map(c => char2byte[c] ?? c.charCodeAt(0)));
+    return new TextDecoder("utf-8", { fatal: false }).decode(bytes);
+  }
+
+  return { encode, decode };
+}
+
+// ── Load ──
+const ort = await import("https://cdn.jsdelivr.net/npm/onnxruntime-web@1.21.0/dist/ort.min.mjs");
+ort.env.wasm.wasmPaths = "https://cdn.jsdelivr.net/npm/onnxruntime-web@1.21.0/dist/";
+
+const tokJson = await (await fetch("tokenizer.json")).json();
+tokenizer = buildTokenizer(tokJson);
+
+const modelBuf = await (await fetch("model.onnx")).arrayBuffer();
+session = await ort.InferenceSession.create(modelBuf, { executionProviders: ["wasm"] });
+
+document.getElementById("status").textContent = "ready";
+document.getElementById("user-input").disabled = false;
+document.getElementById("send-btn").disabled = false;
+document.getElementById("user-input").focus();
+
+// ── Generate ──
+async function generate(inputIds) {
+  let ids = inputIds.slice();
+  for (let i = 0; i < GEN.max_tokens; i++) {
+    const seq = ids.slice(-CONFIG.max_seq_len);
+    const tensor = new ort.Tensor("int64", BigInt64Array.from(seq.map(BigInt)), [1, seq.length]);
+    const logits = (await session.run({ input_ids: tensor })).logits.data;
+    const off = (seq.length - 1) * CONFIG.vocab_size;
+    const last = new Float32Array(CONFIG.vocab_size);
+    for (let v = 0; v < CONFIG.vocab_size; v++) last[v] = logits[off + v] / GEN.temperature;
+    if (GEN.top_k > 0) {
+      const cutoff = [...last].sort((a,b) => b-a)[Math.min(GEN.top_k, last.length) - 1];
+      for (let v = 0; v < CONFIG.vocab_size; v++) if (last[v] < cutoff) last[v] = -Infinity;
+    }
+    const mx = Math.max(...last.filter(v => v !== -Infinity));
+    let sum = 0;
+    const probs = new Float32Array(CONFIG.vocab_size);
+    for (let v = 0; v < CONFIG.vocab_size; v++) { probs[v] = Math.exp(last[v] - mx); sum += probs[v]; }
+    let r = Math.random(), acc = 0, nextId = 0;
+    for (let v = 0; v < CONFIG.vocab_size; v++) { acc += probs[v]/sum; if (acc >= r) { nextId = v; break; } }
+    ids.push(nextId);
+    if (nextId === CONFIG.eos_id) break;
+  }
+  return ids.slice(inputIds.length);
+}
+
+// ── Send ──
+async function send() {
+  const input = document.getElementById("user-input");
+  const text = input.value.trim();
+  if (!text) return;
+  input.value = "";
+  input.disabled = true;
+  document.getElementById("send-btn").disabled = true;
+  document.getElementById("response").textContent = "...";
+
+  const prompt = `<|im_start|>user\n${text}<|im_end|>\n<|im_start|>assistant\n`;
+  const outputIds = await generate(tokenizer.encode(prompt));
+  let reply = tokenizer.decode(outputIds).trim();
+  if (reply.includes("<|im_end|>")) reply = reply.split("<|im_end|>")[0];
+  if (reply.includes("<|im_start|>")) reply = reply.split("<|im_start|>")[0];
+  document.getElementById("response").textContent = reply.trim() || "blub.";
+
+  input.disabled = false;
+  document.getElementById("send-btn").disabled = false;
+  input.focus();
+}
+
+document.getElementById("send-btn").addEventListener("click", send);
+document.getElementById("user-input").addEventListener("keydown", e => {
+  if (e.key === "Enter" && !e.shiftKey && !e.isComposing) { e.preventDefault(); send(); }
+});
+</script>
+</body>
+</html>
