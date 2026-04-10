@@ -4,24 +4,83 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>GuppyLM</title>
+<script src="https://cdn.jsdelivr.net/npm/animejs@3.2.2/lib/anime.min.js"></script>
 <style>
-  body { font-family: monospace; max-width: 600px; margin: 40px auto; padding: 0 20px; }
+  body {
+    margin: 0;
+    height: 100vh;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+  }
+  .chat-ui {
+    width: 600px;
+    margin-top: 40px;
+    font-family: monospace;
+    position: relative;
+    z-index: 1;
+  }
   #status { color: gray; font-size: 13px; margin-bottom: 12px; }
   #response { white-space: pre-wrap; min-height: 40px; padding: 8px; border: 1px solid #ccc; margin-bottom: 12px; }
   #input-row { display: flex; gap: 8px; }
   #user-input { flex: 1; font-family: monospace; font-size: 14px; padding: 6px 8px; }
   #send-btn { font-family: monospace; font-size: 14px; padding: 6px 16px; cursor: pointer; }
   #send-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+  .guppy {
+    position: absolute;
+    width: 360px;
+    height: 360px;
+    top: calc(50% - 180px);
+  }
+  .seaweed {
+    position: absolute;
+    transform: translateX(-50%);
+  }
 </style>
 </head>
 <body>
 
-<div id="status">loading model...</div>
-<div id="response"></div>
-<div id="input-row">
-  <input type="text" id="user-input" placeholder="type a message..." autocomplete="off" disabled />
-  <button id="send-btn" disabled>send</button>
+<!-- 海藻: left=calc(50% + 中心からの距離px), bottom=下からの距離px, width=表示幅, opacity=不透明度 -->
+<img class="seaweed" src="seaweed1.svg" style="left:calc(50% - 380px); bottom:100px; width:240px;">
+<img class="seaweed" src="seaweed2.svg" style="left:calc(50% - 160px); bottom:240px; width:160px; opacity:0.33;">
+<img class="seaweed" src="seaweed1.svg" style="left:calc(50% + 160px); bottom:240px; width:160px; opacity:0.33;">
+<img class="seaweed" src="seaweed2.svg" style="left:calc(50% + 380px); bottom:100px; width:240px;">
+
+<img class="guppy" id="guppy" src="guppy.svg">
+
+<div class="chat-ui">
+  <div id="status">loading model...</div>
+  <div id="response"></div>
+  <div id="input-row">
+    <input type="text" id="user-input" placeholder="type a message..." autocomplete="off" disabled />
+    <button id="send-btn" disabled>send</button>
+  </div>
 </div>
+
+<script>
+const el = document.getElementById('guppy');
+const RANGE = 640;
+const center = (window.innerWidth - 240) / 2;
+const left = center - RANGE / 2;
+const right = center + RANGE / 2;
+
+function swimRight() {
+  anime.timeline({ complete: swimLeft })
+    .add({ targets: el, left: right, duration: 6000, easing: 'linear' })
+    .add({ targets: el, rotateY: [180, 360], duration: 500, easing: 'easeInOutQuad' });
+}
+
+function swimLeft() {
+  anime.timeline({ complete: swimRight })
+    .add({ targets: el, left: left, duration: 6000, easing: 'linear' })
+    .add({ targets: el, rotateY: [360, 540], duration: 500, easing: 'easeInOutQuad' });
+}
+
+el.style.left = left + 'px';
+el.style.transform = 'rotateY(180deg)';
+swimRight();
+</script>
 
 <script type="module">
 const CONFIG = {
