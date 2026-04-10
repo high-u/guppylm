@@ -13,13 +13,25 @@
   }
   .guppy {
     position: absolute;
-    width: 240px;
-    height: 240px;
+    width: 360px;
+    height: 360px;
+  }
+  .seaweed {
+    position: absolute;
+    transform: translateX(-50%);
   }
 </style>
 <body>
+
+<!-- 海藻: left=calc(50% + 中心からの距離px), bottom=下からの距離px, width=表示幅, opacity=不透明度 -->
+<img class="seaweed" src="seaweed1.svg" style="left:calc(50% - 380px); bottom:100px; width:240px;">
+<img class="seaweed" src="seaweed2.svg" style="left:calc(50% - 160px); bottom:240px; width:160px; opacity:0.33;">
+<img class="seaweed" src="seaweed1.svg" style="left:calc(50% + 160px); bottom:240px; width:160px; opacity:0.33;">
+<img class="seaweed" src="seaweed2.svg" style="left:calc(50% + 380px); bottom:100px; width:240px;">
+
 <img class="guppy" id="guppy" src="guppy.svg">
-<script>
+
+<script>  
 const el = document.getElementById('guppy');
 const RANGE = 640;
 const center = (window.innerWidth - 240) / 2;
