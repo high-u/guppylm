@@ -21,12 +21,9 @@
     position: relative;
     z-index: 1;
   }
-  #status { color: gray; font-size: 13px; margin-bottom: 12px; }
-  #response { white-space: pre-wrap; min-height: 40px; padding: 8px; border: 1px solid #ccc; margin-bottom: 12px; }
-  #input-row { display: flex; gap: 8px; }
+  #response { white-space: pre-wrap;}
+  #input-row { display: flex; }
   #user-input { flex: 1; font-family: monospace; font-size: 14px; padding: 6px 8px; }
-  #send-btn { font-family: monospace; font-size: 14px; padding: 6px 16px; cursor: pointer; }
-  #send-btn:disabled { opacity: 0.4; cursor: not-allowed; }
   .guppy {
     position: absolute;
     width: 360px;
@@ -50,11 +47,9 @@
 <img class="guppy" id="guppy" src="guppy.svg">
 
 <div class="chat-ui">
-  <div id="status">loading model...</div>
   <div id="response"></div>
   <div id="input-row">
-    <input type="text" id="user-input" placeholder="type a message..." autocomplete="off" disabled />
-    <button id="send-btn" disabled>send</button>
+    <input type="text" id="user-input" placeholder="type a message..." autocomplete="off" />
   </div>
 </div>
 
@@ -175,9 +170,6 @@ tokenizer = buildTokenizer(tokJson);
 const modelBuf = await (await fetch("model.onnx")).arrayBuffer();
 session = await ort.InferenceSession.create(modelBuf, { executionProviders: ["wasm"] });
 
-document.getElementById("status").textContent = "ready";
-document.getElementById("user-input").disabled = false;
-document.getElementById("send-btn").disabled = false;
 document.getElementById("user-input").focus();
 
 // ── Generate ──
@@ -212,8 +204,6 @@ async function send() {
   const text = input.value.trim();
   if (!text) return;
   input.value = "";
-  input.disabled = true;
-  document.getElementById("send-btn").disabled = true;
   document.getElementById("response").textContent = "...";
 
   const prompt = `<|im_start|>user\n${text}<|im_end|>\n<|im_start|>assistant\n`;
@@ -223,12 +213,9 @@ async function send() {
   if (reply.includes("<|im_start|>")) reply = reply.split("<|im_start|>")[0];
   document.getElementById("response").textContent = reply.trim() || "blub.";
 
-  input.disabled = false;
-  document.getElementById("send-btn").disabled = false;
   input.focus();
 }
 
-document.getElementById("send-btn").addEventListener("click", send);
 document.getElementById("user-input").addEventListener("keydown", e => {
   if (e.key === "Enter" && !e.shiftKey && !e.isComposing) { e.preventDefault(); send(); }
 });
