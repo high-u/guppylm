@@ -77,8 +77,9 @@
   #input-row { display: flex; }
   #user-input {
     flex: 1;
+    min-width: 0;
     font-family: monospace;
-    font-size: 14px;
+    font-size: 1.5vw;
     padding: 8px 20px;
     border: 2px solid #aaa;
     border-radius: 9999px;
@@ -116,7 +117,7 @@
 
 <div class="chat-ui">
   <div id="input-row">
-    <input type="text" id="user-input" list="prompt-list" placeholder="type a message..." autocomplete="off" />
+    <input type="text" id="user-input" list="prompt-list" placeholder="カタカナ デ ハナシカケテ" autocomplete="off" />
     <datalist id="prompt-list">
       <option value="コンニチハ グッピー">
       <option value="チョウシ ハ ドウ?">
