@@ -6,6 +6,7 @@
 <title>GuppyLM</title>
 <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.2/lib/anime.min.js"></script>
 <style>
+@import url('https://fonts.googleapis.com/css2?family=Hachi+Maru+Pop&display=swap');
   body {
     margin: 0;
     height: 100vh;
@@ -21,7 +22,7 @@
     position: relative;
     z-index: 1;
   }
-  #response { white-space: pre-wrap;}
+  #response { position: absolute; bottom: calc(50% + 180px); left: 0; width: 100%; white-space: nowrap; font-family: "Hachi Maru Pop", cursive; font-weight: 400; font-size: 32px; text-align: center; }
   #input-row { display: flex; }
   #user-input { flex: 1; font-family: monospace; font-size: 14px; padding: 6px 8px; }
   .guppy {
@@ -46,8 +47,9 @@
 
 <img class="guppy" id="guppy" src="guppy.svg">
 
+<div id="response"></div>
+
 <div class="chat-ui">
-  <div id="response"></div>
   <div id="input-row">
     <input type="text" id="user-input" placeholder="type a message..." autocomplete="off" />
   </div>
