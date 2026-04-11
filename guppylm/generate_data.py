@@ -126,6 +126,7 @@ WORD_DICT = [
     {"word": "ウゴイテイル",   "pos": "verb", "topics": ["filter"]},
     {"word": "フエテイル",     "pos": "verb", "topics": ["algae", "bubbles"]},
     {"word": "イキ ガ シヤスイ", "pos": "verb", "topics": ["water", "filter"]},
+    {"word": "ソウジ スル",       "pos": "verb", "tr": True, "topics": ["water", "algae"]},
     # adj
     {"word": "キレイ",     "pos": "adj", "topics": ["water", "filter"]},
     {"word": "ニゴッテル", "pos": "adj", "topics": ["water", "algae"]},
@@ -159,6 +160,7 @@ WORD_DICT = [
     {"word": "アガッタ",         "pos": "verb", "topics": ["temp_hot"]},
     {"word": "サガッタ",         "pos": "verb", "topics": ["temp_cold"]},
     {"word": "フルエテイル",     "pos": "verb", "topics": ["temp_cold"]},
+    {"word": "カワル",           "pos": "verb", "ni": True, "topics": ["seasons"]},
     # adj
     {"word": "アツイ",     "pos": "adj", "topics": ["temp_hot"]},
     {"word": "ツメタイ",   "pos": "adj", "topics": ["temp_cold"]},
@@ -191,6 +193,7 @@ WORD_DICT = [
     {"word": "オキタ",     "pos": "verb", "topics": ["sleep", "light"]},
     {"word": "スギル",     "pos": "verb", "topics": ["time"]},
     {"word": "マブシイ",   "pos": "verb", "topics": ["light"]},
+    {"word": "ツク",         "pos": "verb", "ni": True, "topics": ["light", "time"]},
     # adj
     {"word": "アカルイ",   "pos": "adj", "topics": ["light"]},
     {"word": "クライ",     "pos": "adj", "topics": ["night"]},
@@ -220,6 +223,7 @@ WORD_DICT = [
     {"word": "ビックリ シタ", "pos": "verb", "topics": ["noise", "glass_tap"]},
     {"word": "ウタッテイル",  "pos": "verb", "topics": ["singing"]},
     {"word": "カンジル",      "pos": "verb", "tr": True, "topics": ["music", "noise"]},
+    {"word": "キク",       "pos": "verb", "tr": True, "topics": ["music", "noise"]},
     # adj
     {"word": "ウルサイ",   "pos": "adj", "topics": ["noise", "glass_tap"]},
     {"word": "コワイ",     "pos": "adj", "topics": ["noise", "glass_tap"]},
@@ -248,11 +252,12 @@ WORD_DICT = [
     # verb
     {"word": "ミエル",     "pos": "verb", "topics": ["glass", "reflection", "outside"]},
     {"word": "ミエタ",     "pos": "verb", "topics": ["glass", "outside"]},
-    {"word": "カクレル",   "pos": "verb", "topics": ["tank", "plants"]},
-    {"word": "カクレテイル", "pos": "verb", "topics": ["tank", "plants"]},
+    {"word": "カクレル",   "pos": "verb", "ni": True, "topics": ["tank", "plants"]},
+    {"word": "カクレテイル", "pos": "verb", "ni": True, "topics": ["tank", "plants"]},
     {"word": "ソダッテイル",  "pos": "verb", "topics": ["plants"]},
     {"word": "ウツッテイル",  "pos": "verb", "topics": ["reflection"]},
     {"word": "オイテアル",    "pos": "verb", "topics": ["tank"]},
+    {"word": "ミル",       "pos": "verb", "tr": True, "topics": ["glass", "tv", "outside"]},
     # adj
     {"word": "ヒロイ",     "pos": "adj", "topics": ["outside", "tank"]},
     {"word": "セマイ",     "pos": "adj", "topics": ["tank"]},
@@ -414,8 +419,8 @@ WORD_DICT = [
     {"word": "モクヒョウ",   "pos": "noun", "topics": ["goal"]},
     {"word": "ユメ",         "pos": "noun", "topics": ["goal"]},
     # verb
-    {"word": "ナル",         "pos": "verb", "ni": True, "topics": ["goal"]},
-    {"word": "ナリタイ",     "pos": "verb", "ni": True, "topics": ["goal"]},
+    {"word": "ナル",         "pos": "verb", "ni": True, "topics": ["goal", "about", "meaning"]},
+    {"word": "ナリタイ",     "pos": "verb", "ni": True, "topics": ["goal", "about", "dreams"]},
     {"word": "メザス",       "pos": "verb", "tr": True, "topics": ["goal"]},
     {"word": "カナエル",     "pos": "verb", "tr": True, "topics": ["goal"]},
     # adj
@@ -1272,6 +1277,9 @@ def build_sentence(pattern, nouns, verbs_tr, verbs_intr, verbs_ni, adjs):
         return f"{random.choice(nouns)['word']} ガ {random.choice(verbs_intr)['word']}"
     elif pattern == "P7":  # ニ格動詞: N ニ Vni
         return f"{random.choice(nouns)['word']} ニ {random.choice(verbs_ni)['word']}"
+    elif pattern == "P8":  # 題目 + 動詞: N ハ V
+        all_verbs = verbs_tr + verbs_intr + verbs_ni
+        return f"{random.choice(nouns)['word']} ハ {random.choice(all_verbs)['word']}"
 
 
 def get_available_patterns(nouns, verbs_tr, verbs_intr, verbs_ni, adjs):
@@ -1289,6 +1297,8 @@ def get_available_patterns(nouns, verbs_tr, verbs_intr, verbs_ni, adjs):
         patterns.append("P6")       # N ガ Vintr
     if nouns and verbs_ni:
         patterns.append("P7")       # N ニ Vni
+    if nouns and (verbs_tr or verbs_intr or verbs_ni):
+        patterns.append("P8")       # N ハ V
     return patterns
 
 
