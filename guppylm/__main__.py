@@ -57,7 +57,15 @@ def main():
         download_model()
 
     elif cmd == "chat":
-        if not os.path.exists(CHECKPOINT_PATH):
+        sf_path = CHECKPOINT_PATH.replace(".pt", ".safetensors")
+        if "--safetensors" in sys.argv:
+            if not os.path.exists(sf_path):
+                print("safetensors not found. Train first:\n")
+                print("  python -m guppylm train")
+                return
+            sys.argv.remove("--safetensors")
+            sys.argv[0] = sf_path
+        elif not os.path.exists(CHECKPOINT_PATH):
             print("Model not found. Download the pre-trained model first:\n")
             print("  python -m guppylm download\n")
             print("Or train your own:\n")

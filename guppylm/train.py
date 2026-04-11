@@ -6,8 +6,22 @@ import os
 import time
 
 import torch
+from safetensors.torch import save_file
 
 from .config import GuppyConfig, TrainConfig
+
+
+def _save_safetensors(model, path):
+    """Save state_dict as safetensors, excluding weight-tied duplicates."""
+    sd = model.state_dict()
+    seen = set()
+    tensors = {}
+    for k, v in sd.items():
+        ptr = v.data_ptr()
+        if ptr not in seen:
+            seen.add(ptr)
+            tensors[k] = v
+    save_file(tensors, path)
 from .dataset import get_dataloader
 from .model import GuppyLM
 
@@ -134,6 +148,7 @@ def train():
                         "config": vars(mc),
                         "eval_loss": el,
                     }, os.path.join(tc.output_dir, "best_model.pt"))
+                    _save_safetensors(model, os.path.join(tc.output_dir, "best_model.safetensors"))
                     print(f"  -> Best model (eval={el:.4f})")
 
             if step > 0 and step % tc.save_interval == 0:
@@ -142,6 +157,7 @@ def train():
                     "model_state_dict": model.state_dict(),
                     "config": vars(mc),
                 }, os.path.join(tc.output_dir, f"step_{step}.pt"))
+                _save_safetensors(model, os.path.join(tc.output_dir, f"step_{step}.safetensors"))
 
             step += 1
 
@@ -152,6 +168,7 @@ def train():
         "config": vars(mc),
         "train_losses": losses,
     }, os.path.join(tc.output_dir, "final_model.pt"))
+    _save_safetensors(model, os.path.join(tc.output_dir, "final_model.safetensors"))
 
     elapsed = time.time() - t0
     print(f"\nDone! {elapsed:.0f}s, best eval: {best_eval:.4f}")

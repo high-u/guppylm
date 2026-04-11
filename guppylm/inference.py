@@ -17,17 +17,15 @@ class GuppyInference:
         self.device = torch.device(device)
         self.tokenizer = Tokenizer.from_file(tokenizer_path)
 
-        ckpt = torch.load(checkpoint_path, map_location=self.device, weights_only=False)
-
-        # Load config.json from same directory as the model file
         config_dir = os.path.dirname(os.path.abspath(checkpoint_path))
         config_path = os.path.join(config_dir, "config.json")
 
-        # Extract state_dict — handle both legacy and standard formats
-        if isinstance(ckpt, dict) and "model_state_dict" in ckpt:
-            state_dict = ckpt["model_state_dict"]
+        if checkpoint_path.endswith(".safetensors"):
+            from safetensors.torch import load_file
+            state_dict = load_file(checkpoint_path)
         else:
-            state_dict = ckpt
+            ckpt = torch.load(checkpoint_path, map_location=self.device, weights_only=False)
+            state_dict = ckpt["model_state_dict"] if isinstance(ckpt, dict) and "model_state_dict" in ckpt else ckpt
 
         # Load config — try config.json first, fall back to embedded config
         if os.path.exists(config_path):
