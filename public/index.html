@@ -13,7 +13,7 @@
     --input-top: 5vh;
 
     /* ── 回答欄 (中心から上方向へのオフセット) ── */
-    --response-y: -20vh;
+    --response-y: -30vh;
     --response-font-size: 2.5vw;
 
     /* ── グッピー ── */
@@ -291,11 +291,35 @@ async function generate(inputIds) {
   return ids.slice(inputIds.length);
 }
 
+// ── Validate & Convert ──
+function sanitize(raw) {
+  let s = raw;
+  // 全角スペース → 半角スペース
+  s = s.replace(/\u3000/g, ' ');
+  // ひらがな → 全角カタカナ (ぁ-ゖ → ァ-ヶ)
+  s = s.replace(/[\u3041-\u3096]/g, ch =>
+    String.fromCharCode(ch.charCodeAt(0) + 0x60)
+  );
+  // トリム + 連続スペース圧縮
+  s = s.trim().replace(/ {2,}/g, ' ');
+  if (!s) return '';
+  // 許可: 全角カタカナ(ァ-ヶ), 長音(ー), ？, ?, 半角スペース
+  if (/[^\u30A1-\u30F6\u30FC\uFF1F? ]/.test(s)) return null;
+  return s;
+}
+
 // ── Send ──
 async function send() {
   const input = document.getElementById("user-input");
-  const text = input.value.trim();
-  if (!text) return;
+  const raw = input.value;
+  const text = sanitize(raw);
+  if (text === '') return;
+  if (text === null) {
+    input.value = "";
+    document.getElementById("response").textContent = "カタカナ シカ ワカラナイ。";
+    input.focus();
+    return;
+  }
   input.value = "";
   document.getElementById("response").textContent = "...";
 
