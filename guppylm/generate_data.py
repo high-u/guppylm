@@ -26,9 +26,9 @@ WORD_DICT = [
     {"word": "キョウ",     "pos": "noun", "topics": ["greeting", "bye"]},
     # verb
     {"word": "キタ",       "pos": "verb", "topics": ["greeting"]},
-    {"word": "マッテタ",   "pos": "verb", "topics": ["greeting"]},
+    {"word": "マッテタ",   "pos": "verb", "tr": True, "topics": ["greeting"]},
     {"word": "マタ クル",  "pos": "verb", "topics": ["bye"]},
-    {"word": "マッテル",   "pos": "verb", "topics": ["bye"]},
+    {"word": "マッテル",   "pos": "verb", "tr": True, "topics": ["bye"]},
     {"word": "イル",       "pos": "verb", "topics": ["greeting", "bye"]},
     # adj
     {"word": "ウレシイ",   "pos": "adj", "topics": ["greeting"]},
@@ -54,8 +54,8 @@ WORD_DICT = [
     {"word": "ワクワク シテイル",  "pos": "verb", "topics": ["excited", "curious"]},
     {"word": "ドキドキ シテイル",  "pos": "verb", "topics": ["scared", "excited"]},
     {"word": "ノンビリ スル",      "pos": "verb", "topics": ["bored", "tired"]},
-    {"word": "カンガエル",         "pos": "verb", "topics": ["curious", "feeling"]},
-    {"word": "サガシテイル",       "pos": "verb", "topics": ["curious"]},
+    {"word": "カンガエル",         "pos": "verb", "tr": True, "topics": ["curious", "feeling"]},
+    {"word": "サガシテイル",       "pos": "verb", "tr": True, "topics": ["curious"]},
     {"word": "ヤスム",             "pos": "verb", "topics": ["tired"]},
     {"word": "ヤスミタイ",         "pos": "verb", "topics": ["tired"]},
     {"word": "ガンバル",           "pos": "verb", "topics": ["feeling", "excited"]},
@@ -94,13 +94,13 @@ WORD_DICT = [
     {"word": "アジ",       "pos": "noun", "topics": ["taste"]},
     {"word": "ゴハン",     "pos": "noun", "topics": ["food"]},
     # verb
-    {"word": "タベル",     "pos": "verb", "topics": ["food", "taste"]},
-    {"word": "タベタイ",   "pos": "verb", "topics": ["food"]},
-    {"word": "タベテイル", "pos": "verb", "topics": ["food", "taste"]},
-    {"word": "タベタ",     "pos": "verb", "topics": ["food", "taste"]},
-    {"word": "カム",       "pos": "verb", "topics": ["food", "taste"]},
-    {"word": "ノム",       "pos": "verb", "topics": ["taste"]},
-    {"word": "マッテイル", "pos": "verb", "topics": ["food"]},
+    {"word": "タベル",     "pos": "verb", "tr": True, "topics": ["food", "taste"]},
+    {"word": "タベタイ",   "pos": "verb", "tr": True, "topics": ["food"]},
+    {"word": "タベテイル", "pos": "verb", "tr": True, "topics": ["food", "taste"]},
+    {"word": "タベタ",     "pos": "verb", "tr": True, "topics": ["food", "taste"]},
+    {"word": "カム",       "pos": "verb", "tr": True, "topics": ["food", "taste"]},
+    {"word": "ノム",       "pos": "verb", "tr": True, "topics": ["taste"]},
+    {"word": "マッテイル", "pos": "verb", "tr": True, "topics": ["food"]},
     # adj
     {"word": "オイシイ",   "pos": "adj", "topics": ["food", "taste"]},
     {"word": "スキ",       "pos": "adj", "topics": ["food", "taste"]},
@@ -219,7 +219,7 @@ WORD_DICT = [
     {"word": "ユレタ",     "pos": "verb", "topics": ["noise", "glass_tap"]},
     {"word": "ビックリ シタ", "pos": "verb", "topics": ["noise", "glass_tap"]},
     {"word": "ウタッテイル",  "pos": "verb", "topics": ["singing"]},
-    {"word": "カンジル",      "pos": "verb", "topics": ["music", "noise"]},
+    {"word": "カンジル",      "pos": "verb", "tr": True, "topics": ["music", "noise"]},
     # adj
     {"word": "ウルサイ",   "pos": "adj", "topics": ["noise", "glass_tap"]},
     {"word": "コワイ",     "pos": "adj", "topics": ["noise", "glass_tap"]},
@@ -285,13 +285,13 @@ WORD_DICT = [
     {"word": "オヨグ",         "pos": "verb", "topics": ["about", "meaning"]},
     {"word": "オヨイデイル",   "pos": "verb", "topics": ["about"]},
     {"word": "イキテイル",     "pos": "verb", "topics": ["meaning", "age"]},
-    {"word": "オボエテイル",   "pos": "verb", "topics": ["memory"]},
-    {"word": "ワスレタ",       "pos": "verb", "topics": ["memory"]},
+    {"word": "オボエテイル",   "pos": "verb", "tr": True, "topics": ["memory"]},
+    {"word": "ワスレタ",       "pos": "verb", "tr": True, "topics": ["memory"]},
     {"word": "ユメ ヲ ミタ",  "pos": "verb", "topics": ["dreams"]},
     {"word": "ユメ ヲ ミル",  "pos": "verb", "topics": ["dreams"]},
     {"word": "オオキク ナッタ", "pos": "verb", "topics": ["size", "age"]},
-    {"word": "カンガエル",     "pos": "verb", "topics": ["meaning", "smart"]},
-    {"word": "シッテイル",     "pos": "verb", "topics": ["smart", "memory"]},
+    {"word": "カンガエル",     "pos": "verb", "tr": True, "topics": ["meaning", "smart"]},
+    {"word": "シッテイル",     "pos": "verb", "tr": True, "topics": ["smart", "memory"]},
     {"word": "スンデイル",     "pos": "verb", "topics": ["about"]},
     # adj
     {"word": "チイサイ",   "pos": "adj", "topics": ["size", "about"]},
@@ -321,7 +321,7 @@ WORD_DICT = [
     {"word": "メ",         "pos": "noun", "topics": ["cat"]},
     {"word": "テ",         "pos": "noun", "topics": ["children", "visitors"]},
     # verb
-    {"word": "ミテイル",       "pos": "verb", "topics": ["cat", "visitors", "children"]},
+    {"word": "ミテイル",       "pos": "verb", "tr": True, "topics": ["cat", "visitors", "children"]},
     {"word": "キタ",           "pos": "verb", "topics": ["visitors", "children", "friends"]},
     {"word": "アソブ",         "pos": "verb", "topics": ["friends", "children"]},
     {"word": "アソビタイ",     "pos": "verb", "topics": ["friends", "snail"]},
@@ -394,7 +394,7 @@ WORD_DICT = [
     {"word": "ワラウ",         "pos": "verb", "topics": ["joke"]},
     {"word": "コワガル",       "pos": "verb", "topics": ["fear"]},
     {"word": "ニゲル",         "pos": "verb", "topics": ["fear"]},
-    {"word": "カンガエル",     "pos": "verb", "topics": ["smart"]},
+    {"word": "カンガエル",     "pos": "verb", "tr": True, "topics": ["smart"]},
     # adj
     {"word": "ムズカシイ",     "pos": "adj", "topics": ["confused", "smart"]},
     {"word": "オモシロイ",     "pos": "adj", "topics": ["joke", "tv"]},
@@ -415,8 +415,8 @@ WORD_DICT = [
     {"word": "イシ",       "pos": "noun", "topics": ["misc"]},
     # verb
     {"word": "オヨイデイル", "pos": "verb", "topics": ["misc"]},
-    {"word": "ミテイル",     "pos": "verb", "topics": ["misc"]},
-    {"word": "カンガエル",   "pos": "verb", "topics": ["misc"]},
+    {"word": "ミテイル",     "pos": "verb", "tr": True, "topics": ["misc"]},
+    {"word": "カンガエル",   "pos": "verb", "tr": True, "topics": ["misc"]},
     # adj
     {"word": "イイ",       "pos": "adj", "topics": ["misc"]},
     {"word": "フシギ",     "pos": "adj", "topics": ["misc"]},
@@ -1222,32 +1222,38 @@ USER_PROMPTS = {
 # セクション C: 文法パターン
 # ============================================================
 
-def build_sentence(pattern, nouns, verbs, adjs):
+def build_sentence(pattern, nouns, verbs_tr, verbs_intr, adjs):
     """パターンに従って1文を組み立てる。"""
     if pattern == "P1":
         return f"{random.choice(nouns)['word']} ハ {random.choice(adjs)['word']}"
-    elif pattern == "P2":
-        return f"{random.choice(nouns)['word']} ヲ {random.choice(verbs)['word']}"
+    elif pattern == "P2":  # 他動詞のみ
+        return f"{random.choice(nouns)['word']} ヲ {random.choice(verbs_tr)['word']}"
     elif pattern == "P3":
         return f"{random.choice(nouns)['word']} ガ {random.choice(adjs)['word']}"
     elif pattern == "P4":
         loc = random.choice(LOCATION_WORDS)
-        return f"{random.choice(nouns)['word']} ノ {loc} デ {random.choice(verbs)['word']}"
+        all_verbs = verbs_tr + verbs_intr
+        return f"{random.choice(nouns)['word']} ノ {loc} デ {random.choice(all_verbs)['word']}"
     elif pattern == "P5":
-        return f"{random.choice(verbs)['word']}"
-    elif pattern == "P6":
-        return f"{random.choice(nouns)['word']} ガ {random.choice(verbs)['word']}"
+        all_verbs = verbs_tr + verbs_intr
+        return f"{random.choice(all_verbs)['word']}"
+    elif pattern == "P6":  # 自動詞のみ
+        return f"{random.choice(nouns)['word']} ガ {random.choice(verbs_intr)['word']}"
 
 
-def get_available_patterns(nouns, verbs, adjs):
+def get_available_patterns(nouns, verbs_tr, verbs_intr, adjs):
     """利用可能なパターンを返す。必要な品詞が無いパターンは除外。"""
     patterns = []
     if nouns and adjs:
         patterns.extend(["P1", "P3"])
-    if nouns and verbs:
-        patterns.extend(["P2", "P4", "P6"])
-    if verbs:
-        patterns.append("P5")
+    if nouns and verbs_tr:
+        patterns.append("P2")       # N ヲ Vtr
+    if nouns and (verbs_tr or verbs_intr):
+        patterns.append("P4")       # N ノ LOC デ V
+    if verbs_tr or verbs_intr:
+        patterns.append("P5")       # V のみ
+    if nouns and verbs_intr:
+        patterns.append("P6")       # N ガ Vintr
     return patterns
 
 
@@ -1259,7 +1265,8 @@ def generate_response(topic):
     """トピックに属する単語から3文の応答を組み立てる。"""
     pool = [w for w in WORD_DICT if topic in w["topics"]]
     nouns = [w for w in pool if w["pos"] == "noun"]
-    verbs = [w for w in pool if w["pos"] == "verb"]
+    verbs_tr = [w for w in pool if w["pos"] == "verb" and w.get("tr")]
+    verbs_intr = [w for w in pool if w["pos"] == "verb" and not w.get("tr")]
     adjs = [w for w in pool if w["pos"] == "adj"]
     reactions = [w for w in pool if w["pos"] == "reaction"]
 
@@ -1272,7 +1279,7 @@ def generate_response(topic):
         sent1 = random.choice(pool)["word"]
 
     # 利用可能なパターンを取得
-    available = get_available_patterns(nouns, verbs, adjs)
+    available = get_available_patterns(nouns, verbs_tr, verbs_intr, adjs)
 
     # パターンが1つもない場合のフォールバック
     if not available:
@@ -1283,14 +1290,14 @@ def generate_response(topic):
 
     # 文2: パターンで組み立て
     pattern2 = random.choice(available)
-    sent2 = build_sentence(pattern2, nouns, verbs, adjs)
+    sent2 = build_sentence(pattern2, nouns, verbs_tr, verbs_intr, adjs)
 
     # 文3: 別パターンで組み立て
     remaining = [p for p in available if p != pattern2]
     if not remaining:
         remaining = available
     pattern3 = random.choice(remaining)
-    sent3 = build_sentence(pattern3, nouns, verbs, adjs)
+    sent3 = build_sentence(pattern3, nouns, verbs_tr, verbs_intr, adjs)
 
     return f"{sent1}。{sent2}。{sent3}。"
 
