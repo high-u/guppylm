@@ -75,21 +75,31 @@
     text-align: center;
   }
   #input-row { display: flex; }
-  #user-input { flex: 1; font-family: monospace; font-size: 14px; padding: 6px 8px; }
+  #user-input {
+    flex: 1;
+    font-family: monospace;
+    font-size: 14px;
+    padding: 8px 20px;
+    border: 2px solid #aaa;
+    border-radius: 9999px;
+    outline: none;
+  }
+  #user-input:focus { border-color: #5b9bd5; }
   .guppy {
     position: absolute;
     width: var(--guppy-width);
     aspect-ratio: 1 / 1;
     top: calc(50% + var(--guppy-y) - var(--guppy-width) / 2);
+    z-index: 2;
   }
   .seaweed {
     position: absolute;
     transform: translateX(-50%);
   }
-  .seaweed:nth-of-type(1) { left: calc(50% + var(--sw1-x)); bottom: var(--sw1-bottom); width: var(--sw1-width); opacity: var(--sw1-opacity); }
-  .seaweed:nth-of-type(2) { left: calc(50% + var(--sw2-x)); bottom: var(--sw2-bottom); width: var(--sw2-width); opacity: var(--sw2-opacity); }
-  .seaweed:nth-of-type(3) { left: calc(50% + var(--sw3-x)); bottom: var(--sw3-bottom); width: var(--sw3-width); opacity: var(--sw3-opacity); }
-  .seaweed:nth-of-type(4) { left: calc(50% + var(--sw4-x)); bottom: var(--sw4-bottom); width: var(--sw4-width); opacity: var(--sw4-opacity); }
+  .seaweed:nth-of-type(1) { left: calc(50% + var(--sw1-x)); bottom: var(--sw1-bottom); width: var(--sw1-width); opacity: var(--sw1-opacity); z-index: 3; }
+  .seaweed:nth-of-type(2) { left: calc(50% + var(--sw2-x)); bottom: var(--sw2-bottom); width: var(--sw2-width); opacity: var(--sw2-opacity); z-index: 1; }
+  .seaweed:nth-of-type(3) { left: calc(50% + var(--sw3-x)); bottom: var(--sw3-bottom); width: var(--sw3-width); opacity: var(--sw3-opacity); z-index: 1; }
+  .seaweed:nth-of-type(4) { left: calc(50% + var(--sw4-x)); bottom: var(--sw4-bottom); width: var(--sw4-width); opacity: var(--sw4-opacity); z-index: 3; }
 </style>
 </head>
 <body>
@@ -106,7 +116,25 @@
 
 <div class="chat-ui">
   <div id="input-row">
-    <input type="text" id="user-input" placeholder="type a message..." autocomplete="off" />
+    <input type="text" id="user-input" list="prompt-list" placeholder="type a message..." autocomplete="off" />
+    <datalist id="prompt-list">
+      <option value="コンニチハ グッピー">
+      <option value="チョウシ ハ ドウ?">
+      <option value="エサ アゲル ネ">
+      <option value="キョウ ハ アツイ ネ">
+      <option value="サムイ ケド ダイジョウブ?">
+      <option value="セイジ ッテ シッテル?">
+      <option value="ミズ カエタヨ">
+      <option value="デンキ ツケタヨ">
+      <option value="ゴメン オトシチャッタ">
+      <option value="オヤスミ グッピー">
+      <option value="キミ ハ ナニ?">
+      <option value="サミシイ?">
+      <option value="アタラシイ イシ ダヨ">
+      <option value="スウガク デキル?">
+      <option value="ナニ カンガエテル?">
+      <option value="エサ ノ ジカン ダヨ">
+    </datalist>
   </div>
 </div>
 
@@ -128,13 +156,13 @@ const right = center + range / 2;
 function swimRight() {
   anime.timeline({ complete: swimLeft })
     .add({ targets: el, left: right, duration: 6000, easing: 'linear' })
-    .add({ targets: el, rotateY: [180, 360], duration: 500, easing: 'easeInOutQuad' });
+    .add({ targets: el, rotateY: [180, 360], duration: 1000, easing: 'easeInOutQuad' });
 }
 
 function swimLeft() {
   anime.timeline({ complete: swimRight })
     .add({ targets: el, left: left, duration: 6000, easing: 'linear' })
-    .add({ targets: el, rotateY: [360, 540], duration: 500, easing: 'easeInOutQuad' });
+    .add({ targets: el, rotateY: [360, 540], duration: 1000, easing: 'easeInOutQuad' });
 }
 
 el.style.left = left + 'px';
