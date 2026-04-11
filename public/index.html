@@ -7,6 +7,47 @@
 <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.2/lib/anime.min.js"></script>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Hachi+Maru+Pop&display=swap');
+  :root {
+    /* ── 入力欄 ── */
+    --input-width: 40vw;
+    --input-top: 5vh;
+
+    /* ── 回答欄 (中心から上方向へのオフセット) ── */
+    --response-y: -20vh;
+    --response-font-size: 2.5vw;
+
+    /* ── グッピー ── */
+    --guppy-width: 25vw;
+    --guppy-y: 0vh;          /* 画面中心からの垂直オフセット */
+
+    /* ── グッピー泳ぐ範囲 (CSS参照用, 実値はJSで使用) ── */
+    --swim-range: 40vw;
+
+    /* ── 海藻1 (左奥) ── */
+    --sw1-x: -25vw;
+    --sw1-bottom: 10vh;
+    --sw1-width: 16vw;
+    --sw1-opacity: 1;
+
+    /* ── 海藻2 (中左) ── */
+    --sw2-x: -11vw;
+    --sw2-bottom: 24vh;
+    --sw2-width: 11vw;
+    --sw2-opacity: 0.33;
+
+    /* ── 海藻3 (中右) ── */
+    --sw3-x: 11vw;
+    --sw3-bottom: 24vh;
+    --sw3-width: 11vw;
+    --sw3-opacity: 0.33;
+
+    /* ── 海藻4 (右奥) ── */
+    --sw4-x: 25vw;
+    --sw4-bottom: 10vh;
+    --sw4-width: 16vw;
+    --sw4-opacity: 1;
+  }
+
   body {
     margin: 0;
     height: 100vh;
@@ -16,34 +57,48 @@
     align-items: flex-start;
   }
   .chat-ui {
-    width: 600px;
-    margin-top: 40px;
+    width: var(--input-width);
+    margin-top: var(--input-top);
     font-family: monospace;
     position: relative;
     z-index: 1;
   }
-  #response { position: absolute; bottom: calc(50% + 180px); left: 0; width: 100%; white-space: nowrap; font-family: "Hachi Maru Pop", cursive; font-weight: 400; font-size: 32px; text-align: center; }
+  #response {
+    position: absolute;
+    left: 50%;
+    top: calc(50% + var(--response-y));
+    transform: translateX(-50%);
+    white-space: nowrap;
+    font-family: "Hachi Maru Pop", cursive;
+    font-weight: 400;
+    font-size: var(--response-font-size);
+    text-align: center;
+  }
   #input-row { display: flex; }
   #user-input { flex: 1; font-family: monospace; font-size: 14px; padding: 6px 8px; }
   .guppy {
     position: absolute;
-    width: 360px;
-    height: 360px;
-    top: calc(50% - 180px);
+    width: var(--guppy-width);
+    aspect-ratio: 1 / 1;
+    top: calc(50% + var(--guppy-y) - var(--guppy-width) / 2);
   }
   .seaweed {
     position: absolute;
     transform: translateX(-50%);
   }
+  .seaweed:nth-of-type(1) { left: calc(50% + var(--sw1-x)); bottom: var(--sw1-bottom); width: var(--sw1-width); opacity: var(--sw1-opacity); }
+  .seaweed:nth-of-type(2) { left: calc(50% + var(--sw2-x)); bottom: var(--sw2-bottom); width: var(--sw2-width); opacity: var(--sw2-opacity); }
+  .seaweed:nth-of-type(3) { left: calc(50% + var(--sw3-x)); bottom: var(--sw3-bottom); width: var(--sw3-width); opacity: var(--sw3-opacity); }
+  .seaweed:nth-of-type(4) { left: calc(50% + var(--sw4-x)); bottom: var(--sw4-bottom); width: var(--sw4-width); opacity: var(--sw4-opacity); }
 </style>
 </head>
 <body>
 
-<!-- 海藻: left=calc(50% + 中心からの距離px), bottom=下からの距離px, width=表示幅, opacity=不透明度 -->
-<img class="seaweed" src="seaweed1.svg" style="left:calc(50% - 380px); bottom:100px; width:240px;">
-<img class="seaweed" src="seaweed2.svg" style="left:calc(50% - 160px); bottom:240px; width:160px; opacity:0.33;">
-<img class="seaweed" src="seaweed1.svg" style="left:calc(50% + 160px); bottom:240px; width:160px; opacity:0.33;">
-<img class="seaweed" src="seaweed2.svg" style="left:calc(50% + 380px); bottom:100px; width:240px;">
+<!-- 海藻: 位置・サイズは :root のCSS変数で制御 -->
+<img class="seaweed" src="seaweed1.svg">
+<img class="seaweed" src="seaweed2.svg">
+<img class="seaweed" src="seaweed1.svg">
+<img class="seaweed" src="seaweed2.svg">
 
 <img class="guppy" id="guppy" src="guppy.svg">
 
@@ -57,10 +112,18 @@
 
 <script>
 const el = document.getElementById('guppy');
-const RANGE = 640;
-const center = (window.innerWidth - 240) / 2;
-const left = center - RANGE / 2;
-const right = center + RANGE / 2;
+
+// ── 泳ぐ範囲 (vw) ── CSS変数から取得
+const SWIM_RANGE_VW = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--swim-range'));
+const GUPPY_WIDTH_VW = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--guppy-width'));
+
+function vw2px(vw) { return window.innerWidth * vw / 100; }
+
+const range = vw2px(SWIM_RANGE_VW);
+const guppyW = vw2px(GUPPY_WIDTH_VW);
+const center = (window.innerWidth - guppyW) / 2;
+const left = center - range / 2;
+const right = center + range / 2;
 
 function swimRight() {
   anime.timeline({ complete: swimLeft })
