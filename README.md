@@ -3,7 +3,7 @@
 </p>
 
 <h1 align="center">GuppyLM</h1>
-<p align="center"><em>A ~9M parameter LLM that talks like a small fish.</em></p>
+<p align="center"><em>小さな魚のようにおしゃべりする、約900万パラメータの言語モデル。</em></p>
 
 <p align="center">
   <a href="https://huggingface.co/datasets/arman-bd/guppylm-60k-generic"><img src="https://img.shields.io/badge/🤗_Dataset-guppylm--60k-blue" alt="Dataset"/></a>&nbsp;
@@ -22,10 +22,10 @@
 
 ---
 
-> **This project exists to show that training your own language model is not magic.**
-> No PhD required. No massive GPU cluster. One Colab notebook, 5 minutes, and you have a working LLM that you built from scratch — data generation, tokenizer, model architecture, training loop, and inference. If you can run a notebook, you can train a language model.
+> **このプロジェクトは、自分で言語モデルを訓練することが決して魔法ではないことを示すために存在します。**
+> 博士号は不要。巨大なGPUクラスターも不要。Colabノートブック1つと5分あれば、ゼロから構築した動くLLMが手に入ります — データ生成、トークナイザ、モデルアーキテクチャ、学習ループ、推論まで全部含まれています。ノートブックを実行できるなら、言語モデルを訓練できます。
 >
-> It won't produce a billion-parameter model that writes essays. But it will show you exactly how every piece works — from raw text to trained weights to generated output — so the big models stop feeling like black boxes.
+> もちろん、エッセイを書くような数十億パラメータのモデルができるわけではありません。しかし、生のテキストから訓練済みの重み、生成された出力に至るまで、すべての部品がどう動くのかを正確に理解できるため、巨大なモデルがブラックボックスに見えなくなります。
 
 ---
 
@@ -54,69 +54,69 @@ Guppy> ok sleep time. i was following a bubble but now i'll stop. goodnight tank
 
 ---
 
-## What is GuppyLM?
+## GuppyLMとは？
 
-GuppyLM is a tiny language model that pretends to be a fish named Guppy. It speaks in short, lowercase sentences about water, food, light, and tank life. It doesn't understand human abstractions like money, phones, or politics — and it's not trying to.
+GuppyLMは、Guppy（グッピー）という名前の魚のふりをする小さな言語モデルです。水、食べ物、光、水槽の生活について、短い小文字の文で話します。お金、スマホ、政治といった人間の抽象概念は理解しませんし、理解しようともしていません。
 
-It's trained from scratch on 60K synthetic conversations across 60 topics, runs on a single GPU in ~5 minutes, and produces a model small enough to run in a browser.
+ゼロから60種類のトピックで構成された6万件の合成会話データで訓練されており、1台のGPUで約5分で学習でき、ブラウザ上で動くほど小さなモデルを生成します。
 
 ---
 
-## Architecture
+## アーキテクチャ
 
 | | |
 |---|---|
-| **Parameters** | 8.7M |
-| **Layers** | 6 |
-| **Hidden dim** | 384 |
-| **Heads** | 6 |
+| **パラメータ数** | 8.7M |
+| **レイヤー数** | 6 |
+| **隠れ層次元** | 384 |
+| **ヘッド数** | 6 |
 | **FFN** | 768 (ReLU) |
-| **Vocab** | 4,096 (BPE) |
-| **Max sequence** | 128 tokens |
-| **Norm** | LayerNorm |
-| **Position** | Learned embeddings |
-| **LM head** | Weight-tied with embeddings |
+| **語彙数** | 4,096 (BPE) |
+| **最大シーケンス長** | 128トークン |
+| **正規化** | LayerNorm |
+| **位置符号化** | 学習可能埋め込み |
+| **LMヘッド** | 埋め込みと重み共有 |
 
-Vanilla transformer. No GQA, no RoPE, no SwiGLU, no early exit. As simple as it gets.
-
----
-
-## Personality
-
-Guppy:
-- Speaks in short, lowercase sentences
-- Experiences the world through water, temperature, light, vibrations, and food
-- Doesn't understand human abstractions
-- Is friendly, curious, and a little dumb
-- Thinks about food a lot
-
-**60 topics:** greetings, feelings, temperature, food, light, water, tank, noise, night, loneliness, bubbles, glass, reflection, breathing, swimming, colors, taste, plants, filter, algae, snails, scared, excited, bored, curious, happy, tired, outside, cats, rain, seasons, music, visitors, children, meaning of life, time, memory, dreams, size, future, past, name, weather, sleep, friends, jokes, fear, love, age, intelligence, health, singing, TV, and more.
+スタンダードなTransformerです。GQAなし、RoPEなし、SwiGLUなし、早期終了なし。できる限りシンプルな構成です。
 
 ---
 
-## Quick Start
+## ペルソナリティ
 
-### Try in Browser (no install needed)
+Guppyは：
+- 短い小文字の文で話す
+- 水、温度、光、振動、食べ物を通じて世界を体験する
+- 人間の抽象概念を理解しない
+- 友好的で好奇心旺盛で、ちょっとおバカ
+- いつも食べ物のことを考えている
+
+**60のトピック：** 挨拶、感情、温度、食べ物、光、水、水槽、音、夜、寂しさ、泡、ガラス、映り込み、呼吸、泳ぐこと、色、味、植物、フィルター、藻、カタツムリ、怖いこと、興奮、退屈、好奇心、幸せ、疲れ、外の世界、猫、雨、季節、音楽、来客、子ども、人生の意味、時間、記憶、夢、大きさ、未来、過去、名前、天気、睡眠、友だち、冗談、恐怖、愛、年齢、知性、健康、歌うこと、テレビ、など。
+
+---
+
+## クイックスタート
+
+### ブラウザで試す（インストール不要）
 
 [![Try in Browser](https://img.shields.io/badge/Try_in-Browser-64ffda?logo=webassembly)](https://arman-bd.github.io/guppylm/)
 
-Runs entirely in your browser via WebAssembly. Downloads a quantized ONNX model (~10 MB) and runs inference locally — no server, no API keys.
+WebAssembly経由でブラウザ上で完全に動作します。量子化されたONNXモデル（約10 MB）をダウンロードし、ローカルで推論を実行します — サーバーもAPIキーも不要です。
 
-### Chat with Guppy in Colab
+### ColabでGuppyと対話する
 
 [![Open in Colab](https://img.shields.io/badge/Chat_in-Colab-F9AB00?logo=googlecolab)](https://colab.research.google.com/github/arman-bd/guppylm/blob/main/use_guppylm.ipynb)
 
-Downloads the pre-trained model from HuggingFace and lets you chat. Just run all cells.
+HuggingFaceから事前学習済みモデルをダウンロードしてチャットできます。すべてのセルを実行するだけです。
 
-### Train your own
+### 自分で訓練する
 
 [![Open in Colab](https://img.shields.io/badge/Train_in-Colab-F9AB00?logo=googlecolab)](https://colab.research.google.com/github/arman-bd/guppylm/blob/main/train_guppylm.ipynb)
 
-1. Set runtime to **T4 GPU**
-2. **Run all cells** — downloads dataset, trains tokenizer, trains model, tests it
-3. Upload to HuggingFace or download locally
+1. ランタイムを **T4 GPU** に設定する
+2. **すべてのセルを実行する** — データセットのダウンロード、トークナイザの訓練、モデルの訓練、テストまで自動で行われます
+3. HuggingFaceにアップロードするか、ローカルにダウンロードする
 
-### Chat locally
+### ローカルでチャットする
 
 ```bash
 pip install torch tokenizers
@@ -131,8 +131,7 @@ You> it is raining outside
 Guppy> i think rain is the best thing about outside.
 ```
 
-In interactive chat mode, the conversation grows and quickly runs into the 128-token limit, reducing quality.
-You can also invoke chat with a single prompt, and exit after the response:
+インタラクティブチャットモードでは、会話が長くなるとすぐに128トークンの制限に達し、品質が低下します。単一のプロンプトでチャットを呼び出し、応答後に終了することもできます：
 
 ```bash
 python -m guppylm chat --prompt "tell me a joke"
@@ -141,16 +140,16 @@ python -m guppylm chat --prompt "tell me a joke"
 
 ---
 
-## Dataset
+## データセット
 
-**[arman-bd/guppylm-60k-generic](https://huggingface.co/datasets/arman-bd/guppylm-60k-generic)** on HuggingFace.
+HuggingFaceの **[arman-bd/guppylm-60k-generic](https://huggingface.co/datasets/arman-bd/guppylm-60k-generic)** 。
 
 | | |
 |---|---|
-| Samples | 60,000 (57K train / 3K test) |
-| Format | `{"input": "...", "output": "...", "category": "..."}` |
-| Categories | 60 |
-| Generation | Synthetic template composition |
+| サンプル数 | 60,000（訓練57K / テスト3K） |
+| フォーマット | `{"input": "...", "output": "...", "category": "..."}` |
+| カテゴリ数 | 60 |
+| 生成方式 | 合成テンプレート構成 |
 
 ```python
 from datasets import load_dataset
@@ -161,47 +160,47 @@ print(ds["train"][0])
 
 ---
 
-## Project Structure
+## プロジェクト構成
 
 ```
 guppylm/
-├── config.py               Hyperparameters (model + training)
-├── model.py                Vanilla transformer
-├── dataset.py              Data loading + batching
-├── train.py                Training loop (cosine LR, AMP)
-├── generate_data.py        Conversation data generator (60 topics)
-├── eval_cases.py           Held-out test cases
-├── prepare_data.py         Data prep + tokenizer training
-└── inference.py            Chat interface
+├── config.py               ハイパーパラメータ（モデル + 学習）
+├── model.py                スタンダードTransformer
+├── dataset.py              データ読み込み + バッチ処理
+├── train.py                学習ループ（コサインLR、AMP）
+├── generate_data.py        会話データジェネレータ（60トピック）
+├── eval_cases.py           ホールドアウトテストケース
+├── prepare_data.py         データ前処理 + トークナイザ訓練
+└── inference.py            チャットインターフェース
 
 tools/
-├── make_colab.py           Generates Colab notebooks
-├── export_onnx.py          Export model to ONNX (quantized uint8)
-├── export_dataset.py       Push dataset to HuggingFace
-└── dataset_card.md         HuggingFace dataset README
+├── make_colab.py           Colabノートブックの生成
+├── export_onnx.py          ONNXへのエクスポート（uint8量子化）
+├── export_dataset.py       HuggingFaceへのデータセットpush
+└── dataset_card.md         HuggingFaceデータセットREADME
 
 docs/
-├── index.html              Browser demo (ONNX + WASM)
-├── download.sh             Download model.onnx + tokenizer from HF
-├── model.onnx              Quantized uint8 (~10 MB)
-├── tokenizer.json          BPE tokenizer
-└── guppy.png               Logo (transparent)
+├── index.html              ブラウザデモ（ONNX + WASM）
+├── download.sh             model.onnx + トークナイザをHFからダウンロード
+├── model.onnx              量子化uint8（約10 MB）
+├── tokenizer.json          BPEトークナイザ
+└── guppy.png               ロゴ（透過）
 ```
 
 ---
 
-## Design Decisions
+## 設計上の決定
 
-**Why no system prompt?** Every training sample had the same one. A 9M model can't conditionally follow instructions — the personality is baked into the weights. Removing it saves ~60 tokens per inference.
+**なぜシステムプロンプトがないのか？** すべての学習サンプルが同じシステムプロンプトを持っていました。9Mのモデルでは条件付きで指示に従うことはできません — ペルソナリティは重みに焼き込まれています。省略することで、推論ごとに約60トークン節約できます。
 
-**Why single-turn only?** Multi-turn degraded at turn 3-4 due to the 128-token context window. A fish that forgets is on-brand, but garbled output isn't. Single-turn is reliable.
+**なぜ単一ターンのみなのか？** 128トークンのコンテキストウィンドウにより、3〜4ターン目でマルチターンの品質が低下しました。忘れっぽい魚という設定はキャラクターに合っていますが、文字化けした出力は問題外です。単一ターンなら確実です。
 
-**Why vanilla transformer?** GQA, SwiGLU, RoPE, and early exit add complexity that doesn't help at 9M params. Standard attention + ReLU FFN + LayerNorm produces the same quality with simpler code.
+**なぜスタンダードTransformerなのか？** GQA、SwiGLU、RoPE、早期終了は複雑さを増すだけで、9Mパラメータでは品質向上に寄与しません。標準的なアテンション + ReLU FFN + LayerNormで、よりシンプルなコードで同等の品質が得られます。
 
-**Why synthetic data?** A fish character with consistent personality needs consistent training data. Template composition with randomized components (30 tank objects, 17 food types, 25 activities) generates ~16K unique outputs from ~60 templates.
+**なぜ合成データなのか？** 一貫したペルソナリティを持つ魚キャラクターには、一貫した学習データが必要です。ランダム化された要素（水槽のオブジェクト30種、食べ物17種、活動25種）を使ったテンプレート構成により、約60のテンプレートから約16Kのユニークな出力を生成できます。
 
 ---
 
-## License
+## ライセンス
 
 MIT

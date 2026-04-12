@@ -5,30 +5,6 @@ import sys
 
 CHECKPOINT_PATH = "checkpoints/best_model.pt"
 TOKENIZER_PATH = "data/tokenizer.json"
-HF_REPO = "arman-bd/guppylm-9M"
-HF_BASE = f"https://huggingface.co/{HF_REPO}/resolve/main"
-
-
-def download_model():
-    """Download pre-trained GuppyLM from HuggingFace."""
-    import urllib.request
-
-    files = [
-        (f"{HF_BASE}/pytorch_model.bin", CHECKPOINT_PATH),
-        (f"{HF_BASE}/tokenizer.json", TOKENIZER_PATH),
-        (f"{HF_BASE}/config.json", "checkpoints/config.json"),
-    ]
-
-    print(f"Downloading GuppyLM from {HF_REPO}...\n")
-    for url, dest in files:
-        os.makedirs(os.path.dirname(dest), exist_ok=True)
-        name = os.path.basename(dest)
-        print(f"  {name}...", end=" ", flush=True)
-        urllib.request.urlretrieve(url, dest)
-        size_mb = os.path.getsize(dest) / 1e6
-        print(f"{size_mb:.1f} MB")
-
-    print("\nDone! Run: python -m guppylm chat")
 
 
 def main():
@@ -39,7 +15,9 @@ def main():
         print("  python -m guppylm train        Train the model")
         print("  python -m guppylm prepare      Generate data & train tokenizer")
         print("  python -m guppylm chat         Chat with Guppy")
-        print("  python -m guppylm download     Download pre-trained model from HuggingFace")
+        print("    --safetensors                Use safetensors checkpoint")
+        print("  python -m guppylm export       Export to ONNX")
+        print("    --no-quantize                Skip uint8 quantization")
         return
 
     cmd = sys.argv[1]
@@ -53,9 +31,6 @@ def main():
         from .train import train
         train()
 
-    elif cmd == "download":
-        download_model()
-
     elif cmd == "chat":
         sf_path = CHECKPOINT_PATH.replace(".pt", ".safetensors")
         if "--safetensors" in sys.argv:
@@ -66,15 +41,17 @@ def main():
             sys.argv.remove("--safetensors")
             sys.argv[0] = sf_path
         elif not os.path.exists(CHECKPOINT_PATH):
-            print("Model not found. Download the pre-trained model first:\n")
-            print("  python -m guppylm download\n")
-            print("Or train your own:\n")
+            print("Model not found. Train first:\n")
             print("  python -m guppylm prepare")
             print("  python -m guppylm train")
             return
 
         from .inference import main as inference_main
         inference_main()
+
+    elif cmd == "export":
+        from .export_onnx import main as export_main
+        export_main()
 
     else:
         print(f"Unknown command: {cmd}")

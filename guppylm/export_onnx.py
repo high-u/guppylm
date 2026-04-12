@@ -1,44 +1,31 @@
 """
 Export GuppyLM to ONNX format for browser inference via onnxruntime-web.
 
-Exports to docs/model.onnx (quantized uint8 by default) + web/tokenizer.json
-so the browser demo (web/index.html) can load them — works on GitHub Pages.
+Exports to public/model.onnx (quantized uint8 by default) + public/tokenizer.json.
 
 Quantization shrinks the model from ~35 MB (float32) to ~9 MB (uint8) with
 negligible quality loss at this model size.
 
 Usage:
-    python tools/export_onnx.py                        # quantized (default)
-    python tools/export_onnx.py --no-quantize          # keep float32
-    python tools/export_onnx.py --push                 # also upload to HF repo
+    python -m guppylm export                     # quantized (default)
+    python -m guppylm export --no-quantize       # keep float32
 """
 
 import argparse
 import json
 import os
-import sys
+import shutil
 
 import torch
 
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from guppylm.config import GuppyConfig
-from guppylm.model import GuppyLM
+from .config import GuppyConfig
+from .model import GuppyLM
+
+CHECKPOINT_PATH = "checkpoints/best_model.pt"
+TOKENIZER_PATH = "data/tokenizer.json"
 
 
-def load_env():
-    env_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), ".env")
-    if os.path.exists(env_path):
-        with open(env_path) as f:
-            for line in f:
-                line = line.strip()
-                if line and not line.startswith("#") and "=" in line:
-                    key, val = line.split("=", 1)
-                    os.environ.setdefault(key.strip(), val.strip())
-
-
-def export_onnx(checkpoint_path, tokenizer_path, output_path, quantize=True, push=False):
-    import shutil
-
+def export_onnx(checkpoint_path, tokenizer_path, output_path, quantize=True):
     # Load checkpoint
     ckpt = torch.load(checkpoint_path, map_location="cpu", weights_only=False)
 
@@ -115,44 +102,25 @@ def export_onnx(checkpoint_path, tokenizer_path, output_path, quantize=True, pus
         print(f"Quantized {output_path} ({q_size_mb:.1f} MB, uint8)")
         os.remove(fp32_path)
 
-    # Copy tokenizer alongside the ONNX model (needed for web/ GitHub Pages demo)
+        # Clean up external data leftover from float32 export
+        data_path = output_path + ".data"
+        if os.path.exists(data_path):
+            os.remove(data_path)
+
+    # Copy tokenizer alongside the ONNX model
     tok_dest = os.path.join(out_dir, "tokenizer.json")
     if os.path.abspath(tokenizer_path) != os.path.abspath(tok_dest):
         shutil.copy2(tokenizer_path, tok_dest)
         print(f"Copied tokenizer to {tok_dest}")
 
-    # Push to HuggingFace
-    if push:
-        load_env()
-        token = os.environ.get("HF_TOKEN")
-        repo = os.environ.get("HF_REPO")
-        if not token or not repo:
-            print("Set HF_TOKEN and HF_REPO in .env to push. Skipping.")
-            return
-
-        from huggingface_hub import HfApi
-        api = HfApi(token=token)
-        api.upload_file(
-            path_or_fileobj=output_path,
-            path_in_repo="model.onnx",
-            repo_id=repo,
-            repo_type="model",
-        )
-        print(f"Uploaded model.onnx to https://huggingface.co/{repo}")
-
 
 def main():
     parser = argparse.ArgumentParser(description="Export GuppyLM to ONNX")
-    parser.add_argument("--checkpoint", default="checkpoints/best_model.pt")
-    parser.add_argument("--tokenizer", default="data/tokenizer.json")
-    parser.add_argument("--output", default="docs/model.onnx")
+    parser.add_argument("--checkpoint", default=CHECKPOINT_PATH)
+    parser.add_argument("--tokenizer", default=TOKENIZER_PATH)
+    parser.add_argument("--output", default="public/model.onnx")
     parser.add_argument("--no-quantize", action="store_true", help="Skip uint8 quantization")
-    parser.add_argument("--push", action="store_true", help="Upload to HuggingFace repo")
     args = parser.parse_args()
 
     export_onnx(args.checkpoint, args.tokenizer, args.output,
-                quantize=not args.no_quantize, push=args.push)
-
-
-if __name__ == "__main__":
-    main()
+                quantize=not args.no_quantize)
