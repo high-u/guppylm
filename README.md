@@ -7,8 +7,6 @@
 
 <p align="center">
   <a href="https://colab.research.google.com/github/high-u/guppylm/blob/hepburn/train_guppylm_katakana.ipynb"><img src="https://img.shields.io/badge/カタカナ版-Train_in_Colab-F9AB00?logo=googlecolab" alt="Katakana Train"/></a>
-  <br/><br/>
-  <a href="https://high-u.github.io/guppylm/"><img src="https://img.shields.io/badge/ブラウザで試す-64ffda?style=for-the-badge&logo=webassembly&logoColor=white" alt="Browser Demo"/></a>
 </p>
 
 ---
