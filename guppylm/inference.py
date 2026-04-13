@@ -53,7 +53,7 @@ class GuppyInference:
 
         self.model = GuppyLM(self.config).to(self.device)
         filtered = {k: v for k, v in state_dict.items() if k in self.model.state_dict()}
-        self.model.load_state_dict(filtered)
+        self.model.load_state_dict(filtered, strict=False)
         self.model.eval()
 
         total, _ = self.model.param_count()

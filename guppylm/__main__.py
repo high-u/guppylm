@@ -32,14 +32,14 @@ def main():
         train()
 
     elif cmd == "chat":
-        sf_path = CHECKPOINT_PATH.replace(".pt", ".safetensors")
         if "--safetensors" in sys.argv:
+            sf_path = CHECKPOINT_PATH.replace(".pt", ".safetensors")
             if not os.path.exists(sf_path):
                 print("safetensors not found. Train first:\n")
                 print("  python -m guppylm train")
                 return
             sys.argv.remove("--safetensors")
-            sys.argv[0] = sf_path
+            sys.argv.append(f"--checkpoint={sf_path}")
         elif not os.path.exists(CHECKPOINT_PATH):
             print("Model not found. Train first:\n")
             print("  python -m guppylm prepare")
